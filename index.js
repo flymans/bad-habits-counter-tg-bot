@@ -19,7 +19,6 @@ const getBadHabit = (context) => {
 };
 bot.command('count', (ctx) => ctx.reply(`${ctx.update.message.text} was used 1 time`));
 bot.start(getBadHabit);
-bot.launch();
 
 // Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'));
