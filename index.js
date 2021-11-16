@@ -2,6 +2,8 @@ const { Telegraf } = require('telegraf');
 
 require('dotenv').config();
 
+const { sequelize, Habit } = require('./db');
+
 const API_TOKEN = process.env.TELEGRAM_BOT_API || '';
 const PORT = process.env.PORT || 3000;
 const URL = process.env.URL || 'https://bad-habits-counter-tg-bot.herokuapp.com';
@@ -10,14 +12,30 @@ const bot = new Telegraf(API_TOKEN);
 bot.telegram.setWebhook(`${URL}/bot${API_TOKEN}`);
 bot.startWebhook(`/bot${API_TOKEN}`, null, PORT);
 
+const startDB = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+};
+
 const getBadHabit = (context) => {
   context.reply('Welcome. Enter your bad habbit:\nДобро пожаловать! Введите свою вредную привычку:');
-  bot.on('text', async (ctx, next) => {
+  bot.on('text', async (ctx) => {
     ctx.reply(`You entered: ${ctx.update.message.text}`);
-    return next();
+    await Habit.upsert({ name: ctx.update.message.text, userId: ctx.from.id });
   });
 };
-bot.command('count', (ctx) => ctx.reply(`${ctx.update.message.text} was used 1 time`));
+
+startDB();
+
+bot.command('count', async (ctx) => {
+  const badHabits = await Habit.findAll({ attributes: ['name', 'createdAt'], where: { userId: ctx.from.id } });
+  const reply = badHabits.map(({ name, createdAt }) => `${name}: ${createdAt}`).join('\n ------- \n');
+  ctx.reply(reply);
+});
 bot.start(getBadHabit);
 
 // Enable graceful stop
