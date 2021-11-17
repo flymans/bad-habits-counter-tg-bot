@@ -4,7 +4,7 @@
   "description": "telegram bot for counting life without bad habits",
   "main": "index.js",
   "scripts": {
-    "start:dev": "nodemon index.js",
+    "start:dev": "NODE_ENV=development nodemon index.js",
     "start": "node index.js"
   },
   "author": "Aleksandr Panteleev",

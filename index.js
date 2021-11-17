@@ -9,8 +9,6 @@ const PORT = process.env.PORT || 3000;
 const URL = process.env.URL || 'https://bad-habits-counter-tg-bot.herokuapp.com';
 
 const bot = new Telegraf(API_TOKEN);
-bot.telegram.setWebhook(`${URL}/bot${API_TOKEN}`);
-bot.startWebhook(`/bot${API_TOKEN}`, null, PORT);
 
 const startDB = async () => {
   try {
@@ -21,6 +19,14 @@ const startDB = async () => {
   }
 };
 
+const startBot = () => {
+  if (process.env.NODE_ENV === 'production') {
+    bot.telegram.setWebhook(`${URL}/bot${API_TOKEN}`);
+    bot.startWebhook(`/bot${API_TOKEN}`, null, PORT);
+  }
+  bot.launch();
+};
+
 const getBadHabit = (context) => {
   context.reply('Welcome. Enter your bad habbit:\nДобро пожаловать! Введите свою вредную привычку:');
   bot.on('text', async (ctx) => {
@@ -29,14 +35,15 @@ const getBadHabit = (context) => {
   });
 };
 
-startDB();
-
 bot.command('count', async (ctx) => {
   const badHabits = await Habit.findAll({ attributes: ['name', 'createdAt'], where: { userId: ctx.from.id } });
   const reply = badHabits.map(({ name, createdAt }) => `${name}: ${createdAt}`).join('\n ------- \n');
   ctx.reply(reply);
 });
 bot.start(getBadHabit);
+
+startDB();
+startBot();
 
 // Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'));
