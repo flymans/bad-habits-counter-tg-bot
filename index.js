@@ -23,8 +23,9 @@ const startBot = () => {
   if (process.env.NODE_ENV === 'production') {
     bot.telegram.setWebhook(`${URL}/bot${API_TOKEN}`);
     bot.startWebhook(`/bot${API_TOKEN}`, null, PORT);
+  } else {
+    bot.launch();
   }
-  bot.launch();
 };
 
 const getBadHabit = (context) => {
