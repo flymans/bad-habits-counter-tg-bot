@@ -1,8 +1,9 @@
-const { Telegraf } = require('telegraf');
+import { markdownTable } from 'markdown-table';
+import { Telegraf } from 'telegraf';
+import moment from 'moment';
+import 'dotenv/config';
 
-require('dotenv').config();
-
-const { sequelize, Habit } = require('./db');
+import { sequelize, Habit } from './db';
 
 const API_TOKEN = process.env.TELEGRAM_BOT_API || '';
 const PORT = process.env.PORT || 3000;
@@ -36,10 +37,14 @@ const getBadHabit = (context) => {
   });
 };
 
-bot.command('count', async (ctx) => {
+bot.command('list', async (ctx) => {
   const badHabits = await Habit.findAll({ attributes: ['name', 'createdAt'], where: { userId: ctx.from.id } });
-  const reply = badHabits.map(({ name, createdAt }) => `${name}: ${createdAt}`).join('\n ------- \n');
-  ctx.reply(reply);
+  const table = markdownTable(badHabits.reduce((array, habit, index) => {
+    const { name, createdAt } = habit;
+    return [...array, [index + 1, name, moment(createdAt).format('DD.MM.YYYY HH:mm')]];
+  }, [['№', 'Habit', 'Start Date']]));
+
+  ctx.replyWithMarkdownV2(`\`\`\`\n${table}\n\`\`\``);
 });
 bot.start(getBadHabit);
 

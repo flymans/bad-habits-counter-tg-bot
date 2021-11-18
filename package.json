@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "telegram bot for counting life without bad habits",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start:dev": "NODE_ENV=development nodemon index.js",
+    "start:dev": "NODE_ENV=development nodemon  --experimental-specifier-resolution=node index.js",
     "start": "node index.js"
   },
   "author": "Aleksandr Panteleev",
@@ -17,6 +18,8 @@
   },
   "dependencies": {
     "dotenv": "^10.0.0",
+    "markdown-table": "^3.0.1",
+    "moment": "^2.29.1",
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.9.0",

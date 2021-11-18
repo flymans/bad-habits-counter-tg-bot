@@ -1,4 +1,6 @@
-const { Sequelize, DataTypes } = require('sequelize');
+import sequelizeModule from 'sequelize';
+
+const { Sequelize, DataTypes } = sequelizeModule;
 
 const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -33,4 +35,4 @@ const Habit = sequelize.define('habit', {
 
 Habit.sync();
 
-module.exports = { sequelize, Habit };
+export { sequelize, Habit };
