@@ -39,10 +39,10 @@ const getBadHabit = (context) => {
 
 bot.command('list', async (ctx) => {
   const badHabits = await Habit.findAll({ attributes: ['name', 'createdAt'], where: { userId: ctx.from.id } });
-  const table = markdownTable(badHabits.reduce((array, habit, index) => {
+  const table = markdownTable(badHabits.reduce((array, habit) => {
     const { name, createdAt } = habit;
-    return [...array, [index + 1, name, moment(createdAt).format('DD.MM.YYYY HH:mm')]];
-  }, [['№', 'Habit', 'Start Date']]));
+    return [...array, [name.substring(0, 11), moment(createdAt).format('DD.MM.YYYY HH:mm')]];
+  }, [['Habit', 'Start Date']]));
 
   ctx.replyWithMarkdownV2(`\`\`\`\n${table}\n\`\`\``);
 });
