@@ -9,8 +9,10 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: 'postgres',
+    timezone: '+03:00',
     ...(process.env.NODE_ENV === 'production' && {
       dialectOptions: {
+        useUTC: false,
         ssl: {
           require: true,
           rejectUnauthorized: false,
