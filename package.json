@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start:dev": "NODE_ENV=development nodemon  --experimental-specifier-resolution=node index.js",
-    "start": "node index.js"
+    "start": "node --experimental-specifier-resolution=node index.js"
   },
   "author": "Aleksandr Panteleev",
   "license": "MIT",
