@@ -1,9 +1,8 @@
-import { markdownTable } from 'markdown-table';
 import { Telegraf } from 'telegraf';
-import moment from 'moment';
 import 'dotenv/config';
 
-import { sequelize, Habit } from './db';
+import { sequelize } from './db';
+import { start, list, getInfo } from './commands';
 
 const API_TOKEN = process.env.TELEGRAM_BOT_API || '';
 const PORT = process.env.PORT || 3000;
@@ -29,24 +28,11 @@ const startBot = () => {
   }
 };
 
-const getBadHabit = (context) => {
-  context.reply('Welcome. Enter your bad habbit:\nДобро пожаловать! Введите свою вредную привычку:');
-  bot.on('text', async (ctx) => {
-    ctx.reply(`You entered: ${ctx.update.message.text}`);
-    await Habit.upsert({ name: ctx.update.message.text, userId: ctx.from.id });
-  });
-};
+bot.start(start(bot));
+bot.command('list', list);
+bot.command('info', getInfo);
 
-bot.command('list', async (ctx) => {
-  const badHabits = await Habit.findAll({ attributes: ['name', 'createdAt'], where: { userId: ctx.from.id } });
-  const table = markdownTable(badHabits.reduce((array, habit) => {
-    const { name, createdAt } = habit;
-    return [...array, [name.substring(0, 11), moment(createdAt).format('DD.MM.YYYY HH:mm')]];
-  }, [['Habit', 'Start Date']]));
-
-  ctx.replyWithHTML(`<pre>${table}</pre>`);
-});
-bot.start(getBadHabit);
+bot.on('callback_query', (ctx) => console.log(ctx));
 
 startDB();
 startBot();
