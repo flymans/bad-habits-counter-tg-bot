@@ -44,7 +44,7 @@ bot.command('list', async (ctx) => {
     return [...array, [name.substring(0, 11), moment(createdAt).format('DD.MM.YYYY HH:mm')]];
   }, [['Habit', 'Start Date']]));
 
-  ctx.replyWithMarkdownV2(`\`\`\`\n${table}\n\`\`\``);
+  ctx.replyWithHTML(`<pre>${table}</pre>`);
 });
 bot.start(getBadHabit);
 

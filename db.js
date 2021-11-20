@@ -3,16 +3,12 @@ import sequelizeModule from 'sequelize';
 const { Sequelize, DataTypes } = sequelizeModule;
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USERNAME,
-  process.env.DB_PASSWORD,
+  process.env.DATABASE_URL,
   {
     host: process.env.DB_HOST,
     dialect: 'postgres',
-    timezone: '+03:00',
     ...(process.env.NODE_ENV === 'production' && {
       dialectOptions: {
-        useUTC: false,
         ssl: {
           require: true,
           rejectUnauthorized: false,
